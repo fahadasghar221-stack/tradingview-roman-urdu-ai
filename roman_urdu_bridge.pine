@@ -1,0 +1,26 @@
+
+// TradingView Pine v6 — Demo Alert Payload for the Roman Urdu AI Analyst
+//@version=6
+indicator("Roman Urdu AI Analyst Demo Bridge", overlay=true)
+
+rsi = ta.rsi(close, 14)
+[macdLine, signalLine, _] = ta.macd(close, 12, 26, 9)
+ema20 = ta.ema(close, 20)
+ema50 = ta.ema(close, 50)
+ema200 = ta.ema(close, 200)
+atr = ta.atr(14)
+
+bullTrend = ema20 > ema50 and ema50 > ema200
+bearTrend = ema20 < ema50 and ema50 < ema200
+
+bullEngulf = close > open and close[1] < open[1] and close >= open[1] and open <= close[1]
+bearEngulf = close < open and close[1] > open[1] and open >= close[1] and close <= open[1]
+pattern = bullEngulf ? "Bullish Engulfing" : bearEngulf ? "Bearish Engulfing" : "No clear pattern"
+
+trendText = bullTrend ? "Bullish" : bearTrend ? "Bearish" : "Mixed"
+structureText = high > high[1] and low > low[1] ? "Higher High / Higher Low" : high < high[1] and low < low[1] ? "Lower High / Lower Low" : "Mixed"
+
+payload = '{"symbol":"' + syminfo.ticker + '","exchange":"' + syminfo.prefix + '","timeframe":"' + timeframe.period + '","price":' + str.tostring(close) + ',"trend":"' + trendText + '","market_structure":"' + structureText + '","rsi":' + str.tostring(rsi) + ',"macd":' + str.tostring(macdLine) + ',"macd_signal":' + str.tostring(signalLine) + ',"ema20":' + str.tostring(ema20) + ',"ema50":' + str.tostring(ema50) + ',"ema200":' + str.tostring(ema200) + ',"atr":' + str.tostring(atr) + ',"pattern":"' + pattern + '"}'
+
+if barstate.isconfirmed
+    alert(payload, alert.freq_once_per_bar_close)

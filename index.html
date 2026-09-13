@@ -1,0 +1,69 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TradingView AI Analyst — Demo</title>
+<style>
+:root{--bg:#050b14;--card:#0b1422;--line:#1d2b40;--text:#e8eef7;--muted:#8fa1b8;--cyan:#35d5ff;--green:#28e49b;--red:#ff6678;--gold:#f5c85b;--purple:#9a7cff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#0d1a2c,#050b14 55%);color:var(--text);font-family:Inter,Arial,sans-serif}
+header{height:62px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#06101c}
+.logo{font-weight:800;font-size:19px}.sub{color:var(--muted);font-size:12px;margin-left:8px}.live{color:var(--green)}
+.layout{display:grid;grid-template-columns:230px 1fr 390px;min-height:calc(100vh - 62px)}
+aside,.right{border-right:1px solid var(--line);padding:14px}.right{border-right:0;border-left:1px solid var(--line)}
+.card{background:linear-gradient(180deg,#0c1726,#09121f);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 8px 28px #0003}
+.watch{display:flex;justify-content:space-between;padding:10px;border-radius:9px;margin:5px 0;background:#0a1421}.watch.active{outline:1px solid var(--cyan)}
+.chart{min-height:620px;padding:12px}.chartbox{height:600px;border:1px solid var(--line);border-radius:12px;background:repeating-linear-gradient(0deg,#09131f 0,#09131f 49px,#0e1b2a 50px),repeating-linear-gradient(90deg,transparent 0,transparent 79px,#102033 80px);position:relative;overflow:hidden}
+.fakeprice{position:absolute;right:12%;top:28%;font-size:48px;font-weight:800;color:#f3f6fa}.trend{position:absolute;left:8%;right:8%;top:57%;height:2px;background:var(--cyan);transform:rotate(-8deg);box-shadow:0 0 12px var(--cyan)}
+.res{position:absolute;left:10%;right:10%;top:24%;height:3px;background:var(--purple);box-shadow:0 0 12px var(--purple)}
+.bars{position:absolute;left:7%;right:7%;bottom:12%;height:32%;display:flex;align-items:end;gap:3px}.bar{width:7px;background:var(--green);opacity:.7}.bar.r{background:var(--red)}
+.signal{font-size:30px;font-weight:900;color:var(--gold)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.metric{background:#09111d;border:1px solid var(--line);border-radius:8px;padding:10px}.metric b{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.chat{height:180px;overflow:auto;background:#07101b;border:1px solid var(--line);border-radius:9px;padding:10px}.bubble{padding:8px 10px;border-radius:9px;background:#102038;margin:6px 0;font-size:13px}.bubble.ai{background:#0b2a25}.chatrow{display:flex;gap:6px;margin-top:8px}input{flex:1;background:#07101b;color:white;border:1px solid var(--line);border-radius:8px;padding:10px}button{background:#1a2d48;color:white;border:1px solid #2c4667;border-radius:8px;padding:10px 12px;cursor:pointer}button.primary{background:#116a59;border-color:#1d9b80}.small{font-size:12px;color:var(--muted)}h3{margin:4px 0 10px;font-size:14px}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.right,aside{border:0}.chart{min-height:450px}.chartbox{height:430px}.fakeprice{font-size:34px}}
+</style>
+</head>
+<body>
+<header><div class="logo">TV AI Analyst <span class="sub">Live Chart + AI Analysis + Roman Urdu Chat</span></div><div class="live">● LIVE &nbsp; <span id="symbol">XAUUSD</span> · <span id="tf">15m</span></div></header>
+<div class="layout">
+<aside>
+<div class="card"><h3>Watchlist</h3><div class="watch active">XAUUSD <span>Gold</span></div><div class="watch">EURUSD <span>FX</span></div><div class="watch">GBPUSD <span>FX</span></div><div class="watch">BTCUSD <span>Crypto</span></div></div>
+<div class="card"><h3>System</h3><div class="small">TradingView webhook</div><p class="small">Data arrives through TradingView alerts. This dashboard is analysis/demo only.</p></div>
+</aside>
+<main class="chart">
+<div class="chartbox">
+<div class="small" style="position:absolute;top:15px;left:18px">XAUUSD · 15m · TradingView</div>
+<div class="res"></div><div class="trend"></div><div class="fakeprice" id="price">—</div>
+<div class="bars" id="bars"></div>
+</div>
+</main>
+<section class="right">
+<div class="card"><h3>🤖 AI Analyst <span class="live">● Live</span></h3>
+<div class="signal" id="signal">WAIT</div><div class="small">Confidence: <span id="confidence">0</span>%</div><hr style="border-color:#1d2b40">
+<div class="grid2"><div class="metric"><b>Trend</b><span id="trend">—</span></div><div class="metric"><b>Structure</b><span id="structure">—</span></div><div class="metric"><b>RSI</b><span id="rsi">—</span></div><div class="metric"><b>Pattern</b><span id="pattern">—</span></div></div></div>
+<div class="card"><h3>Why?</h3><p id="why" class="small">TradingView data ka wait ho raha hai.</p></div>
+<div class="card"><h3>Possible Scenarios</h3><p id="up" class="small">—</p><p id="down" class="small">—</p></div>
+<div class="card"><h3>💬 Roman Urdu Chat</h3><div class="chat" id="chat"><div class="bubble ai">Bhai, sawal poochho — jaise “Abhi WAIT kyun hai?”</div></div><div class="chatrow"><input id="q" placeholder="Apna sawal Roman Urdu mein..."><button class="primary" onclick="ask()">Ask</button></div></div>
+<div class="card"><div class="small">Updated: <span id="updated">—</span></div></div>
+</section>
+</div>
+<script>
+async function refresh(){
+ const s=await (await fetch('/api/state')).json();
+ document.getElementById('symbol').textContent=s.symbol||'XAUUSD';document.getElementById('tf').textContent=s.timeframe||'15m';
+ document.getElementById('price').textContent=s.price==null?'—':Number(s.price).toLocaleString();
+ document.getElementById('signal').textContent=s.signal;document.getElementById('confidence').textContent=s.confidence;
+ document.getElementById('trend').textContent=s.trend;document.getElementById('structure').textContent=s.market_structure;
+ document.getElementById('rsi').textContent=s.rsi==null?'—':Number(s.rsi).toFixed(2);document.getElementById('pattern').textContent=s.pattern;
+ document.getElementById('why').textContent=s.why;document.getElementById('up').textContent='🟢 '+s.scenario_up;document.getElementById('down').textContent='🔴 '+s.scenario_down;document.getElementById('updated').textContent=s.updated;
+}
+async function ask(){
+ const el=document.getElementById('q'); const q=el.value.trim(); if(!q)return;
+ const c=document.getElementById('chat'); c.innerHTML+=`<div class="bubble">${q}</div>`; el.value='';
+ const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
+ const d=await r.json(); c.innerHTML+=`<div class="bubble ai">${d.answer}</div>`; c.scrollTop=c.scrollHeight;
+}
+for(let i=0;i<34;i++){let b=document.createElement('div');b.className='bar '+(Math.random()>.55?'':'r');b.style.height=(20+Math.random()*80)+'%';document.getElementById('bars').appendChild(b)}
+refresh();setInterval(refresh,3000);
+</script>
+</body>
+</html>
